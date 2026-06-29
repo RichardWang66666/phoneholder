@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details | X-Tech Accessories B2B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            techblue: '#00D2FF', 
+            esrdark: '#1C1C1C', 
+            esrgrey: '#707072',
+            esrlight: '#F5F5F7'
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-esrdark font-sans antialiased">
+  <header class="sticky top-0 z-50 bg-white bg-opacity-90 backdrop-blur-md border-b border-gray-100 h-20 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-1">
+        <span class="text-2xl font-extrabold tracking-tighter uppercase italic">X-TECH</span>
+      </a>
+      <nav class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-widest text-esrdark">
+        <a href="index.html">Home</a>
+        <a href="products.html" class="text-techblue">Catalog</a>
+        <a href="projects.html">OEM Case</a>
+        <a href="inquiry.html">Inquiry</a>
+      </nav>
+      <div id="inquiry-badge" class="bg-techblue text-white rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-bold hidden">0</div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-20 lg:py-32 text-esrdark">
+    <div id="product-header" class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start mb-40">
+      <div id="detail-image" class="rounded-[3rem] overflow-hidden border border-gray-100 aspect-[4/5] bg-esrlight shadow-sm">
+        <!-- Image injected here -->
+      </div>
+      <div class="space-y-12">
+        <div class="space-y-6">
+          <span class="inline-block bg-techblue bg-opacity-10 text-techblue text-[10px] font-bold px-4 py-1.5 rounded-full border border-techblue border-opacity-20 uppercase tracking-widest">Premium OEM Sourcing</span>
+          <h1 id="detail-title" class="text-5xl lg:text-7xl font-extrabold text-esrdark tracking-tighter leading-none uppercase italic"></h1>
+          <p id="detail-desc" class="text-esrgrey text-sm leading-relaxed max-w-lg font-medium"></p>
+        </div>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="p-8 bg-esrlight rounded-3xl border border-gray-100">
+            <span class="text-[9px] font-bold uppercase opacity-40 block mb-2 tracking-widest">Production Cycle</span>
+            <span id="detail-lead" class="font-bold text-techblue text-xl">20 Days / 30k Units</span>
+          </div>
+          <div class="p-8 bg-esrlight rounded-3xl border border-gray-100">
+            <span class="text-[9px] font-bold uppercase opacity-40 block mb-2 tracking-widest">Bulk MOQ</span>
+            <span id="detail-moq" class="font-bold text-esrdark text-xl">500 Pieces</span>
+          </div>
+        </div>
+        <button id="add-btn" class="w-full bg-esrdark text-white font-bold tracking-widest py-6 rounded-3xl uppercase text-xs hover:bg-techblue hover:text-white transition-all shadow-xl">Add to RFQ List</button>
+      </div>
+    </div>
+
+    <div id="dynamic-sections" class="space-y-48">
+      <!-- Dynamic sections injected here -->
+    </div>
+  </main>
+
+  <footer class="bg-esrlight py-20 border-t border-gray-200 text-center">
+    <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-esrgrey">
+      &copy; 2026 X-Tech Accessories &bull; High-Performance Manufacturing
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="shared.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const id = new URLSearchParams(window.location.search).get('id');
+      const p = PRODUCTS.find(x => x.id === id);
+      if (!p) return window.location.href = 'products.html';
+
+      document.getElementById('detail-title').textContent = p.name;
+      document.getElementById('detail-desc').textContent = p.description;
+      document.getElementById('detail-image').innerHTML = `<img src="${p.image}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">`;
+      document.getElementById('add-btn').onclick = () => addToInquiry(p.id, p.name, p.category, p.image);
+
+      if (p.contentSections) {
+        document.getElementById('dynamic-sections').innerHTML = p.contentSections.map(s => {
+          if (s.type === 'trust_badges') return `
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 border-y border-gray-100">
+              ${s.badges.map(b => `
+                <div class="flex flex-col items-center text-center gap-4 group">
+                  <div class="w-16 h-16 bg-esrlight rounded-2xl flex items-center justify-center text-techblue border border-gray-100 group-hover:bg-techblue group-hover:text-white transition-all duration-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  </div>
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-esrdark">${b.label}</span>
+                </div>
+              `).join('')}
+            </div>`;
+          
+          if (s.type === 'split_content') return `
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+              <div class="rounded-[3rem] overflow-hidden border border-gray-100 aspect-[16/9] lg:aspect-auto bg-esrlight">
+                <img src="${s.image}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
+              </div>
+              <div class="space-y-6">
+                <span class="text-xs font-bold text-techblue uppercase tracking-[0.3em] block">${s.subtitle}</span>
+                <h2 class="text-4xl lg:text-5xl font-extrabold text-esrdark tracking-tighter leading-tight uppercase italic">${s.title}</h2>
+                <p class="text-esrgrey text-sm leading-relaxed font-medium">${s.text}</p>
+              </div>
+            </div>`;
+
+          if (s.type === 'tech_features_grid') return `
+            <div class="py-24 space-y-16">
+              <h3 class="text-4xl font-extrabold text-center text-esrdark tracking-tight uppercase italic">${s.title}</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-esrdark">
+                ${s.features.map(f => `
+                  <div class="p-10 bg-esrlight rounded-[2.5rem] border border-gray-100 space-y-6 hover:border-techblue transition-all duration-500">
+                    <div class="w-12 h-12 rounded-2xl bg-esrdark text-white flex items-center justify-center text-xl font-bold italic">${f.n}</div>
+                    <div class="space-y-3">
+                      <h4 class="text-sm font-extrabold uppercase tracking-widest text-esrdark">${f.label}</h4>
+                      <p class="text-xs text-esrgrey font-medium leading-relaxed">${f.desc}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>`;
+
+          return '';
+        }).join('');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFQ Center | X-Tech Accessories B2B Inquiry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            techblue: '#00D2FF', 
+            esrdark: '#1C1C1C', 
+            esrgrey: '#707072',
+            esrlight: '#F5F5F7'
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-esrdark font-sans antialiased">
+  <header class="sticky top-0 z-50 bg-white bg-opacity-90 backdrop-blur-md border-b border-gray-100 h-20 flex items-center">
+    <div class="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-1">
+        <span class="text-2xl font-extrabold tracking-tighter uppercase italic text-esrdark">X-TECH</span>
+      </a>
+      <nav class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-widest text-esrdark">
+        <a href="index.html">Home</a>
+        <a href="products.html">Catalog</a>
+        <a href="projects.html">OEM Case</a>
+        <a href="inquiry.html" class="text-techblue">Inquiry</a>
+      </nav>
+      <div id="inquiry-badge" class="bg-techblue text-white rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-bold hidden">0</div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-20 lg:py-32">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+      <div>
+        <span class="text-techblue text-[10px] font-bold uppercase tracking-widest mb-4 block">B2B RFQ CENTER</span>
+        <h1 class="text-5xl font-extrabold text-esrdark tracking-tighter mb-8 uppercase italic leading-none">Consolidate Your <br>Inquiry.</h1>
+        <div id="inquiry-list" class="space-y-6">
+          <!-- Items injected here -->
+        </div>
+      </div>
+      <div class="bg-esrlight p-10 lg:p-16 rounded-[3rem] border border-gray-100 shadow-sm">
+        <h3 class="text-2xl font-extrabold text-esrdark mb-8 uppercase italic">Business Information</h3>
+        <form id="rfq-form" class="space-y-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest opacity-40">Contact Name</label>
+            <input type="text" placeholder="e.g. John Doe" required class="w-full bg-white border border-gray-200 p-4 rounded-2xl text-esrdark outline-none focus:border-techblue transition-colors font-medium">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest opacity-40">Business Email</label>
+            <input type="email" placeholder="name@company.com" required class="w-full bg-white border border-gray-200 p-4 rounded-2xl text-esrdark outline-none focus:border-techblue transition-colors font-medium">
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold uppercase tracking-widest opacity-40">OEM / ODM Requirements</label>
+            <textarea placeholder="Tell us about your logo, packaging, or custom hardware needs..." class="w-full bg-white border border-gray-200 p-4 rounded-2xl text-esrdark outline-none focus:border-techblue transition-colors h-40 font-medium"></textarea>
+          </div>
+          <button type="submit" class="w-full bg-esrdark text-white font-bold py-5 rounded-2xl uppercase text-[12px] tracking-widest shadow-xl hover:bg-techblue hover:text-white transition-all">Submit RFQ</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-esrlight py-20 border-t border-gray-200 text-center">
+    <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-esrgrey">
+      &copy; 2026 X-Tech Accessories &bull; Global B2B Hub
+    </div>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script>
+    function renderList() {
+      const items = getInquiryItems();
+      const list = document.getElementById('inquiry-list');
+      if (items.length === 0) {
+        list.innerHTML = `<div class="p-12 text-center border-2 border-dashed border-gray-200 rounded-[2.5rem]"><p class="text-esrgrey opacity-60 text-sm italic font-medium">Your RFQ list is empty. Explore our catalog to add products.</p></div>`;
+        return;
+      }
+      list.innerHTML = items.map(i => `
+        <div class="p-8 bg-white border border-gray-100 rounded-[2rem] flex justify-between items-center group hover:border-techblue transition-all shadow-sm">
+          <div class="flex items-center gap-6">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden bg-esrlight border border-gray-100"><img src="${i.image}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+            <div>
+              <h4 class="text-lg font-extrabold text-esrdark group-hover:text-techblue transition-colors uppercase italic">${i.name}</h4>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-esrgrey mt-1">MOQ: 500 PCS &middot; Fast Lead Time</p>
+            </div>
+          </div>
+          <button onclick="removeFromInquiry('${i.id}'); renderList();" class="w-10 h-10 flex items-center justify-center text-esrgrey hover:text-techblue text-2xl font-light transition-colors">&times;</button>
+        </div>
+      `).join('');
+    }
+    document.addEventListener('DOMContentLoaded', renderList);
+    window.addEventListener('inquiryChanged', renderList);
+
+    document.getElementById('rfq-form').onsubmit = (e) => {
+      e.preventDefault();
+      alert('Your inquiry has been submitted successfully. Our B2B manager will contact you within 24 hours.');
+      clearInquiryBox();
+      renderList();
+    };
+  </script>
+</body>
+</html>
